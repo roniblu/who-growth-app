@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>WHO Growth Z-Score App</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root,[data-theme="light"]{--bg:#f7f6f2;--surface:#fbfaf7;--surface2:#f2efea;--border:#d8d4cd;--text:#26231d;--muted:#6e6a63;--primary:#01696f;--primary-2:#0b4f55;--success:#437a22;--warn:#964219;--error:#a12c7b;--inverse:#f8f7f3;--shadow:0 10px 28px rgba(24,19,11,.08);--r1:14px;--r2:20px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;--s8:32px;--text-sm:14px;--text-base:16px;--text-lg:20px;--text-xl:28px}
+    [data-theme="dark"]{--bg:#171614;--surface:#1d1b19;--surface2:#272420;--border:#393732;--text:#ebe8e2;--muted:#b2ada5;--primary:#56a0ab;--primary-2:#2b7f8c;--success:#79b453;--warn:#cb7d56;--error:#db78b6;--inverse:#171614;--shadow:0 10px 28px rgba(0,0,0,.34)}
+    *{box-sizing:border-box} html{-webkit-text-size-adjust:100%;text-size-adjust:100%} body{margin:0;min-height:100dvh;font-family:'Satoshi',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);font-size:var(--text-base);line-height:1.55}
+    button,input,select{font:inherit;color:inherit} input,select,button{appearance:none;-webkit-appearance:none} .app{max-width:740px;margin:0 auto;padding:calc(env(safe-area-inset-top) + var(--s4)) var(--s4) calc(env(safe-area-inset-bottom) + 92px)}
+    .skip{position:absolute;left:-9999px} .skip:focus{left:12px;top:12px;background:var(--surface);padding:10px 12px;border-radius:10px;z-index:20}
+    .hero{display:grid;gap:var(--s4);margin-bottom:var(--s5)} .brand{display:flex;align-items:flex-start;gap:12px} .logo{width:40px;height:40px;color:var(--primary);flex:none}
+    h1{font-size:var(--text-xl);line-height:1.06;margin:0} .lead{margin:6px 0 0;color:var(--muted)} .theme{min-width:44px;min-height:44px;border:1px solid var(--border);border-radius:999px;background:var(--surface);box-shadow:var(--shadow)}
+    .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);padding:var(--s4);margin-bottom:var(--s4)}
+    .card h2{font-size:var(--text-lg);margin:0 0 12px} .hint{font-size:var(--text-sm);color:var(--muted)} .grid{display:grid;gap:12px} .two{grid-template-columns:1fr 1fr}
+    label{display:block;font-size:var(--text-sm);font-weight:700;margin:0 0 6px} input,select{width:100%;min-height:48px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+    .dateGrid{display:grid;grid-template-columns:1.2fr .9fr 1fr;gap:8px} .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px} .seg button{min-height:48px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);font-weight:700}
+    .seg button.active{background:var(--primary);color:var(--inverse);border-color:var(--primary)} .meta{padding:12px 14px;border-radius:14px;background:var(--surface2);color:var(--muted);font-size:var(--text-sm)}
+    .warn{display:none;background:rgba(150,66,25,.12);color:var(--warn);border:1px solid rgba(150,66,25,.25);padding:12px 14px;border-radius:14px;margin-top:12px}
+    .results{display:grid;gap:12px} .res{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:14px} .resHead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}
+    .resTitle{font-weight:700} .badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap} .ok{background:rgba(67,122,34,.16);color:var(--success)} .wv{background:rgba(150,66,25,.16);color:var(--warn)} .er{background:rgba(161,44,123,.16);color:var(--error)} .pr{background:rgba(1,105,111,.16);color:var(--primary)}
+    .band{font-size:24px;font-weight:700;margin:4px 0 8px} .small{font-size:13px;color:var(--muted)} .zbar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:12px 0 10px} .zbar span{padding:8px 0;border-radius:10px;background:var(--surface);text-align:center;font-size:12px} .zbar span.active{background:var(--primary);color:var(--inverse);font-weight:700}
+    .summary{display:grid;gap:10px} .sumRow{display:flex;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--border)} .sumRow:last-child{border-bottom:none;padding-bottom:0}
+    .footerBar{position:fixed;left:0;right:0;bottom:0;padding:10px 14px calc(env(safe-area-inset-bottom) + 10px);background:color-mix(in srgb, var(--bg) 84%, transparent);backdrop-filter:blur(14px);border-top:1px solid var(--border)}
+    .footerInner{max-width:740px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:10px} .btn{min-height:50px;border:none;border-radius:999px;padding:0 18px;font-weight:700} .primary{background:var(--primary);color:var(--inverse)} .secondary{background:var(--surface);border:1px solid var(--border)}
+    @media (max-width:420px){.app{padding-left:12px;padding-right:12px}.dateGrid{grid-template-columns:1fr .9fr .95fr}.two{grid-template-columns:1fr}.footerInner{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<main class="app" id="main">
+  <section class="hero">
+    <div class="topbar">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" aria-label="Growth app logo"><path d="M14 48c5-18 13-28 18-28s13 10 18 28"/><path d="M22 43h20"/><circle cx="32" cy="15" r="6"/></svg>
+        <div>
+          <h1>WHO Growth Z-Score Calculator</h1>
+          <p class="lead">Manual date selectors, larger touch targets, and mobile-first results.</p>
+        </div>
+      </div>
+      <button class="theme" id="themeBtn" aria-label="Toggle theme">◐</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Patient details</h2>
+    <div class="grid">
+      <div class="two grid">
+        <div>
+          <label for="sex">Sex</label>
+          <select id="sex"><option value="girls">Girl</option><option value="boys">Boy</option></select>
+        </div>
+        <div>
+          <label for="posture">Height entry</label>
+          <select id="posture"><option value="auto">Use entered value as-is</option><option value="standing_under2">Standing under 2 years for BMI (+0.7 cm)</option><option value="lying_2to5">Lying 2–5 years for BMI (-0.7 cm)</option></select>
+        </div>
+      </div>
+
+      <div>
+        <label>Birthdate</label>
+        <div class="dateGrid">
+          <select id="bMonth"></select>
+          <select id="bDay"></select>
+          <select id="bYear"></select>
+        </div>
+      </div>
+
+      <div>
+        <label>Assessment date</label>
+        <div class="dateGrid">
+          <select id="aMonth"></select>
+          <select id="aDay"></select>
+          <select id="aYear"></select>
+        </div>
+      </div>
+
+      <div class="meta" id="ageBox">Age: —</div>
+
+      <div class="two grid">
+        <div>
+          <label for="height">Length / height (cm)</label>
+          <input id="height" type="number" inputmode="decimal" step="0.1" placeholder="e.g. 86.4">
+        </div>
+        <div>
+          <label for="weight">Weight (kg)</label>
+          <input id="weight" type="number" inputmode="decimal" step="0.1" placeholder="e.g. 11.8">
+        </div>
+      </div>
+
+      <div>
+        <label for="hc">Head circumference (cm, optional)</label>
+        <input id="hc" type="number" inputmode="decimal" step="0.1" placeholder="e.g. 47.2">
+      </div>
+    </div>
+    <div class="warn" id="warn"></div>
+  </section>
+
+  <section class="card">
+    <h2>Summary</h2>
+    <div class="summary" id="summary">
+      <div class="sumRow"><span>Reference set</span><strong>—</strong></div>
+      <div class="sumRow"><span>Age in months</span><strong>—</strong></div>
+      <div class="sumRow"><span>Age in years + months</span><strong>—</strong></div>
+      <div class="sumRow"><span>Computed BMI</span><strong>—</strong></div><div class="sumRow"><span>Body surface area</span><strong>—</strong></div><div class="sumRow"><span>Holliday-Segar fluid</span><strong>—</strong></div><div class="sumRow"><span>Ludan fluid</span><strong>—</strong></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Interpretation</h2>
+    <p class="hint" style="margin:0 0 12px">This mobile version avoids iPhone local date-input issues by using regular selectors instead of the browser date field.</p>
+    <div class="results" id="results"></div>
+  </section>
+</main>
+
+<div class="footerBar">
+  <div class="footerInner">
+    <button class="btn primary" id="compute">Compute z-score bands</button>
+    <button class="btn secondary" id="reset">Reset</button>
+  </div>
+</div>
+
+<script>
+const DATA={girls:{wfl_0_2:{rows:{45:[1.9,2.1,2.3,2.5,2.7,3.0,3.3],50:[2.6,2.8,3.1,3.4,3.7,4.0,4.5],55:[3.5,3.8,4.2,4.5,5.0,5.5,6.1],60:[4.5,4.9,5.4,5.9,6.4,7.1,7.8],65:[5.5,5.9,6.5,7.1,7.8,8.6,9.5],70:[6.3,6.9,7.5,8.2,9.0,9.9,10.9],75:[7.1,7.7,8.4,9.1,10.0,11.0,12.2],80:[7.8,8.5,9.2,10.1,11.0,12.1,13.4],85:[8.7,9.4,10.3,11.2,12.3,13.5,14.9],90:[9.7,10.5,11.4,12.5,13.7,15.0,16.5],95:[10.6,11.5,12.6,13.7,15.0,16.5,18.2],100:[11.6,12.6,13.7,15.0,16.5,18.1,20.0],105:[12.7,13.8,15.1,16.5,18.2,20.0,22.2],110:[14.0,15.3,16.7,18.3,20.2,22.3,24.7]}},wfh_2_5:{rows:{65:[5.6,6.1,6.6,7.2,7.9,8.7,9.7],70:[6.4,7.0,7.6,8.3,9.1,10.0,11.1],75:[7.2,7.8,8.5,9.3,10.2,11.2,12.3],80:[7.9,8.6,9.4,10.2,11.2,12.3,13.6],85:[8.8,9.6,10.4,11.4,12.5,13.7,15.1],90:[9.8,10.6,11.6,12.6,13.8,15.2,16.8],95:[10.8,11.7,12.7,13.9,15.2,16.7,18.5],100:[11.7,12.8,13.9,15.2,16.7,18.4,20.3],105:[12.9,14.0,15.3,16.8,18.4,20.3,22.5],110:[14.2,15.5,17.0,18.6,20.5,22.6,25.1],115:[15.7,17.2,18.8,20.7,22.8,25.2,28.1],120:[17.3,18.9,20.7,22.8,25.2,28.0,31.2]}},wfa_0_5:{rows:{0:[2.0,2.4,2.8,3.2,3.7,4.2,4.8],6:[5.2,5.8,6.5,7.3,8.2,9.3,10.4],12:[6.5,7.3,8.2,8.9,10.1,11.5,13.0],24:[8.1,9.2,10.3,11.5,13.0,14.8,16.9],36:[9.6,10.8,12.4,14.0,15.8,18.1,20.9],48:[11.0,12.5,14.2,16.1,18.3,20.9,24.1],60:[12.4,14.1,16.0,18.2,20.7,23.9,27.8]}},wfa_5_10:{rows:{61:[14.4,16.2,18.1,20.2,22.8,26.1,30.2],72:[15.4,17.5,19.8,22.1,25.1,28.9,33.6],84:[16.7,19.0,21.6,24.2,27.7,32.0,37.3],96:[18.1,20.7,23.5,26.5,30.4,35.2,41.2],108:[19.8,22.7,25.8,29.2,33.6,39.0,45.8],120:[22.0,25.3,28.8,32.6,37.6,43.7,51.3]}},lhfa_0_2:{rows:{0:[43.6,45.4,47.3,49.1,51.0,52.9,54.7],6:[58.9,61.2,63.5,65.7,68.0,70.3,72.5],12:[66.3,68.9,71.4,74.0,76.6,79.2,81.7],18:[72.0,74.9,77.8,80.7,83.6,86.5,89.4],24:[76.7,80.0,83.2,86.4,89.6,92.9,96.1]}},lhfa_2_5:{rows:{24:[76.0,79.3,82.5,85.7,88.9,92.2,95.4],36:[83.6,87.4,91.2,95.1,98.9,102.7,106.5],48:[89.8,94.1,98.4,102.7,107.0,111.3,115.7],60:[95.2,99.9,104.7,109.4,114.2,118.9,123.7]}},hfa_5_19:{rows:{61:[95.3,100.1,104.8,109.6,114.4,119.1,123.9],72:[99.8,104.9,110.0,115.1,120.2,125.4,130.5],84:[104.4,109.9,115.3,120.8,126.3,131.7,137.2],96:[109.2,115.0,120.8,126.6,132.4,138.2,143.9],108:[114.2,120.3,126.4,132.5,138.6,144.7,150.8],120:[119.4,125.8,132.2,138.6,145.0,151.4,157.8],132:[125.1,131.7,138.3,145.0,151.6,158.3,164.9],144:[130.7,137.6,144.4,151.2,158.1,164.9,171.8],156:[135.6,142.5,149.4,156.4,163.3,170.3,177.2],168:[139.0,145.9,152.8,159.8,166.7,173.7,180.6],180:[141.0,147.9,154.8,161.7,168.5,175.4,182.3],192:[142.2,148.9,155.7,162.5,169.3,176.1,182.9],204:[142.8,149.5,156.2,162.9,169.5,176.2,182.9],216:[143.2,149.8,156.5,163.1,169.7,176.3,182.9],228:[143.5,150.1,156.6,163.2,169.7,176.2,182.8]}},bfa_0_2:{rows:{0:[10.1,11.1,12.2,13.3,14.6,16.1,17.7],6:[13.0,14.1,15.5,16.9,18.5,20.3,22.3],12:[12.7,13.8,15.0,16.4,17.9,19.6,21.6],18:[12.3,13.3,14.4,15.7,17.2,18.8,20.8],24:[12.1,13.1,14.2,15.4,16.8,18.4,20.3]}},bfa_2_5:{rows:{24:[12.1,13.1,14.2,15.4,16.8,18.4,20.3],36:[11.8,12.8,13.9,15.3,16.9,18.4,20.3],48:[11.7,12.7,13.8,15.2,16.8,18.6,20.7],60:[11.7,12.7,13.9,15.3,17.1,19.2,22.1]}},bmifa_5_19:{rows:{61:[11.8,12.7,13.9,15.2,16.9,18.9,21.3],72:[11.7,12.7,13.9,15.3,17.0,19.2,22.1],84:[11.8,12.7,13.9,15.4,17.3,19.8,23.3],96:[11.9,12.9,14.1,15.7,17.7,20.6,24.8],108:[12.1,13.1,14.4,16.1,18.3,21.5,26.5],120:[12.4,13.5,14.8,16.6,19.0,22.6,28.4],132:[12.7,13.9,15.3,17.2,19.9,23.7,30.2],144:[13.2,14.4,16.0,18.0,20.8,25.0,31.9],156:[13.6,14.9,16.6,18.8,21.8,26.2,33.4],168:[14.0,15.4,17.2,19.6,22.7,27.3,34.7],180:[14.4,15.9,17.8,20.2,23.5,28.2,35.5],192:[14.6,16.2,18.2,20.7,24.1,28.9,36.1],204:[14.7,16.4,18.4,21.0,24.5,29.3,36.3],216:[14.7,16.4,18.6,21.3,24.8,29.5,36.3],228:[14.7,16.5,18.7,21.4,25.0,29.7,36.2]}},hcfa_0_5:{rows:{0:[31.7,32.9,34.1,35.3,36.5,37.7,38.9],6:[39.8,41.0,42.2,43.5,44.7,45.9,47.1],12:[42.2,43.5,44.7,46.0,47.2,48.5,49.7],24:[44.2,45.5,46.8,48.1,49.4,50.7,52.0],36:[45.2,46.5,47.8,49.1,50.4,51.7,53.0],48:[45.7,47.0,48.3,49.6,50.9,52.2,53.5],60:[46.1,47.4,48.7,50.0,51.3,52.6,53.9]}}},boys:{wfl_0_2:{rows:{45:[1.9,2.0,2.2,2.4,2.7,3.0,3.3],50:[2.6,2.8,3.0,3.3,3.6,4.0,4.4],55:[3.6,3.8,4.2,4.5,5.0,5.4,6.0],60:[4.7,5.1,5.5,6.0,6.5,7.1,7.8],65:[5.7,6.2,6.7,7.3,7.9,8.6,9.4],70:[6.6,7.2,7.8,8.4,9.2,10.0,10.9],75:[7.5,8.1,8.8,9.5,10.3,11.3,12.3],80:[8.2,8.9,9.6,10.4,11.4,12.4,13.6],85:[9.1,9.8,10.6,11.5,12.5,13.6,14.9],90:[10.1,10.9,11.8,12.7,13.8,15.0,16.4],95:[11.0,11.9,12.8,13.9,15.1,16.4,17.9],100:[12.0,12.9,14.0,15.2,16.5,18.0,19.6],105:[13.0,14.1,15.3,16.6,18.1,19.8,21.7],110:[14.2,15.4,16.8,18.3,20.0,21.9,24.1]}},wfh_2_5:{rows:{65:[5.9,6.3,6.9,7.4,8.1,8.8,9.6],70:[6.8,7.3,7.9,8.6,9.3,10.2,11.1],75:[7.6,8.2,8.9,9.6,10.5,11.4,12.5],80:[8.3,9.0,9.7,10.6,11.5,12.6,13.7],85:[9.2,10.0,10.8,11.7,12.7,13.8,15.1],90:[10.2,11.0,11.9,12.9,14.0,15.2,16.6],95:[11.1,12.0,13.0,14.1,15.3,16.6,18.1],100:[12.1,13.1,14.2,15.4,16.7,18.2,19.9],105:[13.2,14.3,15.5,16.8,18.4,20.1,22.0],110:[14.4,15.6,17.0,18.5,20.2,22.2,24.4],115:[15.7,17.1,18.6,20.4,22.4,24.6,27.2],120:[17.1,18.6,20.4,22.4,24.6,27.2,30.1]}},wfa_0_5:{rows:{0:[2.0,2.5,2.9,3.3,3.9,4.4,5.0],6:[5.7,6.4,7.1,7.9,8.8,9.8,10.9],12:[7.0,7.8,8.6,9.6,10.8,12.0,13.3],24:[9.0,10.0,11.2,12.2,13.6,15.3,17.1],36:[10.8,12.1,13.6,14.9,16.7,18.8,21.2],48:[12.2,13.8,15.5,17.0,19.0,21.4,24.2],60:[13.5,15.3,17.2,18.9,21.2,24.0,27.2]}},wfa_5_10:{rows:{61:[14.7,16.7,18.7,20.8,23.4,26.6,30.7],72:[15.9,18.1,20.4,22.7,25.7,29.5,34.3],84:[17.1,19.7,22.1,24.8,28.2,32.5,38.0],96:[18.5,21.2,24.0,27.0,30.9,35.8,42.1],108:[20.2,23.2,26.4,29.7,34.1,39.6,46.6],120:[22.4,25.8,29.4,33.2,38.1,44.4,52.4]}},lhfa_0_2:{rows:{0:[44.2,46.1,48.0,49.9,51.8,53.7,55.6],6:[61.2,63.3,65.5,67.6,69.8,71.9,74.0],12:[68.6,71.0,73.4,75.7,78.1,80.5,82.9],18:[74.2,76.9,79.6,82.3,85.0,87.7,90.4],24:[78.7,81.7,84.8,87.8,90.9,93.9,97.0]}},lhfa_2_5:{rows:{24:[78.0,81.0,84.1,87.1,90.2,93.2,96.3],36:[85.0,88.7,92.4,96.1,99.8,103.5,107.2],48:[90.7,94.9,99.1,103.3,107.5,111.7,115.9],60:[96.1,100.7,105.3,110.0,114.6,119.2,123.9]}},hfa_5_19:{rows:{61:[96.4,101.2,106.1,110.9,115.8,120.6,125.5],72:[100.7,105.7,110.6,115.5,120.4,125.4,130.3],84:[104.9,110.0,115.0,120.1,125.1,130.2,135.2],96:[109.1,114.2,119.4,124.5,129.7,134.8,139.9],108:[113.3,118.5,123.7,128.8,134.0,139.2,144.4],120:[117.7,122.9,128.1,133.4,138.6,143.8,149.0],132:[122.5,127.8,133.1,138.4,143.7,149.0,154.3],144:[127.5,132.9,138.3,143.7,149.1,154.5,159.9],156:[132.8,138.2,143.7,149.1,154.6,160.1,165.5],168:[138.2,143.7,149.2,154.6,160.1,165.6,171.1],180:[143.0,148.4,153.9,159.3,164.8,170.2,175.7],192:[145.5,150.7,156.0,161.2,166.5,171.7,177.0],204:[146.6,151.8,157.0,162.2,167.4,172.6,177.8],216:[147.2,152.3,157.4,162.5,167.6,172.7,177.8],228:[147.6,152.6,157.7,162.7,167.8,172.9,177.9]}},bfa_0_2:{rows:{0:[10.2,11.1,12.2,13.4,14.8,16.3,18.1],6:[13.6,14.7,16.0,17.3,18.8,20.5,22.3],12:[13.4,14.4,15.5,16.8,18.2,19.8,21.6],18:[12.9,13.9,14.9,16.1,17.5,19.0,20.8],24:[12.7,13.6,14.6,15.7,17.0,18.5,20.3]}},bfa_2_5:{rows:{24:[12.9,13.8,14.8,16.0,17.3,18.9,20.6],36:[12.4,13.4,14.4,15.6,16.9,18.4,20.0],48:[12.1,13.1,14.1,15.3,16.7,18.2,19.9],60:[12.0,12.9,14.0,15.2,16.6,18.3,20.3]}},bmifa_5_19:{rows:{61:[12.1,13.0,14.1,15.3,16.6,18.3,20.2],72:[12.1,13.0,14.1,15.3,16.8,18.5,20.7],84:[12.3,13.1,14.2,15.5,17.0,19.0,21.6],96:[12.4,13.3,14.4,15.7,17.4,19.7,22.8],108:[12.6,13.5,14.6,16.0,17.9,20.5,24.3],120:[12.8,13.7,14.9,16.4,18.5,21.4,26.1],132:[13.1,14.1,15.3,16.9,19.2,22.5,28.0],144:[13.4,14.5,15.8,17.5,19.9,23.6,30.0],156:[13.8,14.9,16.4,18.2,20.8,24.8,31.7],168:[14.3,15.5,17.0,19.0,21.8,25.9,33.1],180:[14.7,16.0,17.6,19.8,22.7,27.0,34.1],192:[15.1,16.5,18.2,20.5,23.5,27.9,34.8],204:[15.4,16.9,18.8,21.1,24.3,28.6,35.2],216:[15.7,17.3,19.2,21.7,24.9,29.2,35.4],228:[15.9,17.6,19.6,22.2,25.4,29.7,35.5]}},hcfa_0_5:{rows:{0:[31.9,33.2,34.5,35.8,37.0,38.3,39.5],6:[40.9,42.1,43.3,44.6,45.8,47.0,48.3],12:[43.6,44.8,46.1,47.2,48.4,49.6,50.8],24:[45.5,46.8,48.0,49.2,50.5,51.7,53.0],36:[46.2,47.5,48.8,50.0,51.2,52.5,53.8],48:[46.7,48.0,49.3,50.5,51.8,53.1,54.3],60:[47.0,48.3,49.6,50.8,52.1,53.4,54.7]}}}};
+const ZS=[-3,-2,-1,0,1,2,3], months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const $=id=>document.getElementById(id); const ids=['bMonth','bDay','bYear','aMonth','aDay','aYear']; const els=Object.fromEntries(ids.map(id=>[id,$(id)]));
+function fillSelect(sel, arr){sel.innerHTML=arr.map(v=>`<option value="${v.value}">${v.label}</option>`).join('')}
+function buildDateSelectors(){fillSelect(els.bMonth, months.map((m,i)=>({value:i+1,label:m}))); fillSelect(els.aMonth, months.map((m,i)=>({value:i+1,label:m}))); fillSelect(els.bDay, Array.from({length:31},(_,i)=>({value:i+1,label:i+1}))); fillSelect(els.aDay, Array.from({length:31},(_,i)=>({value:i+1,label:i+1}))); const now=new Date(); const years=Array.from({length:30},(_,i)=>now.getFullYear()-i); fillSelect(els.bYear, years.map(y=>({value:y,label:y}))); fillSelect(els.aYear, Array.from({length:3},(_,i)=>now.getFullYear()-i).map(y=>({value:y,label:y}))); els.aMonth.value=now.getMonth()+1; els.aDay.value=now.getDate(); els.aYear.value=now.getFullYear(); const oneYearAgo=new Date(now.getFullYear()-1, now.getMonth(), now.getDate()); els.bMonth.value=oneYearAgo.getMonth()+1; els.bDay.value=oneYearAgo.getDate(); els.bYear.value=oneYearAgo.getFullYear();}
+function makeDate(prefix){const m=+$(prefix+'Month').value,d=+$(prefix+'Day').value,y=+$(prefix+'Year').value; const dt=new Date(y,m-1,d); return (dt.getFullYear()===y&&dt.getMonth()===m-1&&dt.getDate()===d)?dt:null}
+function ageFromDates(b,a){if(!b||!a||a<b) return null; let y=a.getFullYear()-b.getFullYear(), m=a.getMonth()-b.getMonth(); if(a.getDate()<b.getDate()) m--; if(m<0){y--;m+=12} let total=(a.getFullYear()-b.getFullYear())*12+(a.getMonth()-b.getMonth()); if(a.getDate()<b.getDate()) total--; return {years:y,months:m,totalMonths:total,text:`${y} year${y!==1?'s':''} ${m} month${m!==1?'s':''}`}}
+function nearestKey(obj,x){return Object.keys(obj).map(Number).reduce((a,b)=>Math.abs(b-x)<Math.abs(a-x)?b:a)}
+function classify(value,cuts){if(value<cuts[0]) return '< -3'; if(value>cuts[6]) return '> +3'; let best=0,diff=Infinity; cuts.forEach((v,i)=>{const d=Math.abs(v-value); if(d<diff){diff=d;best=i}}); return ZS[best]}
+function intervalLabel(value,cuts){if(value<cuts[0]) return 'below -3 SD'; if(value>cuts[6]) return 'above +3 SD'; for(let i=0;i<cuts.length-1;i++){if(value>=cuts[i]&&value<=cuts[i+1]){const l=ZS[i]>0?`+${ZS[i]}`:`${ZS[i]}`, r=ZS[i+1]>0?`+${ZS[i+1]}`:`${ZS[i+1]}`; return `between ${l} and ${r} SD`}} return 'outside displayed SD range'}
+function interpret(metric,band){if(['Weight-for-length','Weight-for-height'].includes(metric)){if(band === '< -3') return ['Severe wasting','er']; if(band===-3||band===-2) return ['Wasting','wv']; if(band===2||band===3) return ['Possible overweight','wv']; if(band === '> +3') return ['Obesity range','er']; return ['Within expected range','ok']} if(metric==='Weight-for-age'){if(band === '< -3') return ['Severely underweight','er']; if(band===-3||band===-2) return ['Underweight','wv']; return ['Within expected range','ok']} if(['Length-for-age','Height-for-age'].includes(metric)){if(band === '< -3') return ['Severe stunting','er']; if(band===-3||band===-2) return ['Stunting','wv']; if(band===2||band===3||band==='> +3') return ['Tall for age','pr']; return ['Within expected range','ok']} if(metric==='BMI-for-age'){if(band === '< -3') return ['Severe thinness','er']; if(band===-3||band===-2) return ['Thinness','wv']; if(band===1) return ['Risk of overweight','pr']; if(band===2) return ['Overweight','wv']; if(band===3||band==='> +3') return ['Obesity','er']; return ['Within expected range','ok']} if(metric==='Head circumference-for-age'){if(band === '< -3') return ['Markedly low head circumference','er']; if(band===-3||band===-2) return ['Low head circumference','wv']; if(band===2||band===3||band==='> +3') return ['Large head circumference','pr']; return ['Within expected range','ok']} return ['Interpreted','pr']}
+function metricResult(metric,table,refValue,measured){const key=nearestKey(table.rows,refValue), cuts=table.rows[key], band=classify(measured,cuts), [label,cls]=interpret(metric,band), interval=intervalLabel(measured,cuts); return {metric,key,cuts,band,label,cls,measured,interval}}
+function bandText(b){return typeof b==='number'?(b>0?`+${b}`:`${b}`):b}
+function adjustedBMIHeight(ageMonths,rawHeight){const p=$("posture").value; if(Number.isNaN(rawHeight)) return rawHeight; if(ageMonths<24&&p==='standing_under2') return rawHeight+0.7; if(ageMonths>=24&&ageMonths<=60&&p==='lying_2to5') return rawHeight-0.7; return rawHeight}
+function calcBSA(h,w){if(Number.isNaN(h)||Number.isNaN(w)||h<=0||w<=0) return null; return Math.sqrt((h*w)/3600)}
+function calcHolidaySegar(w){if(Number.isNaN(w)||w<=0) return null; let daily=0,hourly=0; if(w<=10){daily=100*w; hourly=4*w}else if(w<=20){daily=1000+50*(w-10); hourly=40+2*(w-10)}else{daily=1500+20*(w-20); hourly=60+1*(w-20)} return {daily, hourly}}
+function calcLudan(w,bsa){if(Number.isNaN(w)||w<=0) return null; let rate=0; if(w<3){rate=75}else if(w<10){rate=100}else if(w<20){rate=75}else if(w<30){rate=60}else{rate=50} const daily=w*rate; const hourly=daily/24; return {daily,hourly,rate}}
+function resultCard(r){const active=typeof r.band==='number'?r.band:null; return `<article class="res"><div class="resHead"><div><div class="resTitle">${r.metric}</div><div class="small">Measured: ${r.measured} | nearest row: ${r.key}</div></div><span class="badge ${r.cls}">${r.label}</span></div><div class="band">Band: ${bandText(r.band)}</div><div class="small"><strong>Position:</strong> ${r.interval}</div><div class="zbar">${ZS.map(z=>`<span class="${active===z?'active':''}">${z>0?`+${z}`:z}</span>`).join('')}</div><div class="small">${r.cuts.map((v,i)=>`${ZS[i]>0?`+${ZS[i]}`:ZS[i]}=${v}`).join(' | ')}</div></article>`}
+function updateAge(){const b=makeDate('b'), a=makeDate('a'), age=ageFromDates(b,a); $('ageBox').textContent=age?`Age: ${age.text} (${age.totalMonths} completed months)`:'Age: Please select valid dates'}
+function compute(){const warn=$('warn'), results=$('results'); warn.style.display='none'; results.innerHTML=''; const b=makeDate('b'), a=makeDate('a'), age=ageFromDates(b,a); if(!age){warn.textContent='Please choose valid birthdate and assessment date.'; warn.style.display='block'; return} const sex=$('sex').value, set=DATA[sex], h=parseFloat($('height').value), w=parseFloat($('weight').value), hc=$('hc').value===''?null:parseFloat($('hc').value); const bmiH=adjustedBMIHeight(age.totalMonths,h); const bmi=(!Number.isNaN(w)&&!Number.isNaN(bmiH)&&bmiH>0)?+(w/((bmiH/100)**2)).toFixed(2):null; const bsa=calcBSA(h,w); const hs=calcHolidaySegar(w); const ludan=calcLudan(w,bsa); const refs=[], out=[];
+if(!Number.isNaN(w)){const wr=age.totalMonths<=60?'wfa_0_5':age.totalMonths<=120?'wfa_5_10':null; if(wr){out.push(metricResult('Weight-for-age',set[wr],age.totalMonths,w)); refs.push(`Weight-for-age ${wr}`)}}
+if(!Number.isNaN(h)&&!Number.isNaN(w)){const wf=age.totalMonths<24?'wfl_0_2':age.totalMonths<=60?'wfh_2_5':null; if(wf){out.push(metricResult(wf==='wfl_0_2'?'Weight-for-length':'Weight-for-height',set[wf],h,w)); refs.push(wf==='wfl_0_2'?'Weight-for-length wfl_0_2':'Weight-for-height wfh_2_5')}}
+if(!Number.isNaN(h)){if(age.totalMonths<=24){out.push(metricResult('Length-for-age',set.lhfa_0_2,age.totalMonths,h)); refs.push('Length-for-age lhfa_0_2')} else if(age.totalMonths<=60){out.push(metricResult('Height-for-age',set.lhfa_2_5,age.totalMonths,h)); refs.push('Height-for-age lhfa_2_5')} else if(age.totalMonths<=228){out.push(metricResult('Height-for-age',set.hfa_5_19,age.totalMonths,h)); refs.push('Height-for-age hfa_5_19')}}
+if(bmi!==null){const br=age.totalMonths<=24?'bfa_0_2':age.totalMonths<=60?'bfa_2_5':age.totalMonths<=228?'bmifa_5_19':null; if(br){out.push(metricResult('BMI-for-age',set[br],age.totalMonths,bmi)); refs.push(`BMI-for-age ${br}${bmiH!==h?` adjusted height ${bmiH.toFixed(1)} cm`:''}`)}}
+if(hc!==null&&!Number.isNaN(hc)&&age.totalMonths<=60){out.push(metricResult('Head circumference-for-age',set.hcfa_0_5,age.totalMonths,hc)); refs.push('Head circumference-for-age hcfa_0_5')}
+$('summary').innerHTML=`<div class="sumRow"><span>Reference set</span><strong>${refs.join('; ')||'—'}</strong></div><div class="sumRow"><span>Age in months</span><strong>${age.totalMonths}</strong></div><div class="sumRow"><span>Age in years + months</span><strong>${age.text}</strong></div><div class="sumRow"><span>Computed BMI</span><strong>${bmi!==null?bmi.toFixed(2)+' kg/m²':'—'}</strong></div><div class="sumRow"><span>Body surface area</span><strong>${bsa!==null?bsa.toFixed(2)+' m²':'—'}</strong></div><div class="sumRow"><span>Holliday-Segar fluid</span><strong>${hs?`${Math.round(hs.daily)} mL/day | ${hs.hourly.toFixed(1)} mL/hr`:'—'}</strong></div><div class="sumRow"><span>Ludan fluid</span><strong>${ludan?`${Math.round(ludan.daily)} mL/day | ${ludan.hourly.toFixed(1)} mL/hr (${ludan.rate} mL/kg/day)`:'—'}</strong></div>`;
+if(!out.length){warn.textContent='Enter at least one valid measurement.'; warn.style.display='block'; return} results.innerHTML=out.map(resultCard).join(''); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})}
+function resetAll(){['height','weight','hc'].forEach(id=>$(id).value=''); buildDateSelectors(); updateAge(); $('results').innerHTML=''; $('warn').style.display='none'; $('summary').innerHTML='<div class="sumRow"><span>Reference set</span><strong>—</strong></div><div class="sumRow"><span>Age in months</span><strong>—</strong></div><div class="sumRow"><span>Age in years + months</span><strong>—</strong></div><div class="sumRow"><span>Computed BMI</span><strong>—</strong></div><div class="sumRow"><span>Body surface area</span><strong>—</strong></div><div class="sumRow"><span>Holliday-Segar fluid</span><strong>—</strong></div><div class="sumRow"><span>Ludan fluid</span><strong>—</strong></div>'}
+$('themeBtn').addEventListener('click',()=>document.documentElement.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')); ['bMonth','bDay','bYear','aMonth','aDay','aYear'].forEach(id=>$(id).addEventListener('change',updateAge)); $('compute').addEventListener('click',compute); $('reset').addEventListener('click',resetAll); buildDateSelectors(); updateAge();
+</script>
+</body>
+</html>
